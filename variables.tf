@@ -26,5 +26,9 @@ variable "instance_name" {
 
 variable "image" {
   description = "image to build instance from"
-  default = "ubuntu-1804-bionic-v20181120"
+  default = "ub18-nested-kvm"
+}
+
+variable "user" {
+  default = "agurha"
 }
