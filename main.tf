@@ -12,32 +12,29 @@ variable "hostname" {
 }
 
 # Configure the Packet Provider
-provider "packet" {
-  auth_token = "${var.token}"
+provider "google" {
+  credentials = "${file("account.json")}"
+  project     = "${var.gcp_project}"
+  region      = "${var.gcp_region}"
 }
 
-resource "packet_device" "vmonpacket" {
-  hostname         = "${var.hostname}"
-  plan             = "baremetal_0"
-  facility         = "ams1"
-  operating_system = "ubuntu_16_04"
-  billing_cycle    = "hourly"
-  project_id       = "${var.projectid}"
+resource "google_compute_instance" "demo" {
+  name         = "${var.instance_name}"
+  machine_type = "${var.machine_type}"
+  zone         = "${var.gcp_zone}"
 
-  connection {
-    type        = "ssh"
-    user        = "root"
-    private_key = "${file("~/.ssh/id_rsa")}"
+  boot_disk {
+    initialize_params {
+      image = "${var.image}"
+    }
   }
 
-  provisioner "remote-exec" {
-    inline = <<EOF
-export DEBIAN_FRONTEND=noninteractive
-apt-get update
-apt-get dist-upgrade -y
-apt-get install -y language-pack-en sysstat vim htop git
-sleep 2 && systemctl kexec &
-EOF
+  network_interface {
+    network = "default"
+
+    access_config {
+      // Ephemeral IP
+    }
   }
 
   provisioner "remote-exec" {
