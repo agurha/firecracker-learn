@@ -1,6 +1,5 @@
 [Unit]
-Description=Firecracker
-Documentation=https://consul.io/docs
+Description=LearnFirecracker
 Wants=network-online.target
 After=network-online.target
 
